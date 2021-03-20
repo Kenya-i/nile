@@ -3,6 +3,8 @@ require 'net/http'
 module Api
   module V1
     class BooksController < ApplicationController
+      include ActionController::HttpAuthentication::Token
+
       MAX_PAGINATION_LIMIT = 100
 
       before_action :authenticate_user, only: %i[create destroy]
@@ -48,7 +50,12 @@ module Api
         end
 
         def authenticate_user
-          
+          token, _options = token_and_options(request)
+          user_id = AuthenticationTokenService.decode(token)
+          # raise user_id.inspect
+          User.find(user_id)
+        rescue ActiveRecord::RecordNotFound
+          render status: :unauthorized
         end
     end
   end

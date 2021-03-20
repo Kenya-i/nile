@@ -7,4 +7,9 @@ class AuthenticationTokenService
 
     JWT.encode(payload, HMAC_SECRET, ALGORITHM_TYPE)
   end
+
+  def self.decode(token)
+    decode_token = JWT.decode token, HMAC_SECRET, true, { algorithm: ALGORITHM_TYPE }
+    decode_token[0]["user_id"]
+  end
 end
